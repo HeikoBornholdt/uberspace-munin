@@ -144,8 +144,10 @@ Nun fehlt noch ein runwhen-Job, welcher alle 5 Minuten `~/opt/munin/bin/munin-cr
 
 In der Datei `~/etc/run-munin-cron/run` der Variable `RUNWHEN` den Wert `,M/5` geben, sowie folgendes in Zeile 29 schreiben:
 
-   eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)
-   export PERL5LIB=/home/swag/usr/local/share/perl5:/home/swag/lib/perl:$PERL5LIB
+    eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)
+    export PERL5LIB=/home/swag/usr/local/share/perl5:/home/swag/lib/perl:$PERL5LIB
+
+Jetzt noch den Symlink erstellen, damit der runwhen-Job auch gestartet wird:
 
     ln -s /home/$USER/etc/run-munin-cron ~/service/munin-cron
 
