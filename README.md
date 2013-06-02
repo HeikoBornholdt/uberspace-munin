@@ -1,5 +1,4 @@
 TODO: cgi-Dateien werden durch HTTP-Auth noch nicht geschützt
-TODO: toast die URLs der Archive übergeben, damit dieser die Pakete für einen installiert.
 
 # Munin auf einem Uberspace betreiben
 
