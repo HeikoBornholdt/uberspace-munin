@@ -23,7 +23,7 @@ Das Perl-Modul `RRDs.pm` benötigt "etwas" mehr Arbeit: Es benötigt rrdtool, we
     cd ~/src/
     wget http://oss.oetiker.ch/rrdtool/pub/rrdtool.tar.gz
     tar xzf rrdtool.tar.gz
-    cd rrdtool-1.4.7/
+    cd rrdtool-*/
     export PKG_CONFIG_PATH=/home/$USER/lib/pkgconfig/
     ./configure --prefix=/home/$USER/
     make
