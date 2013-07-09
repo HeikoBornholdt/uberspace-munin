@@ -1,5 +1,3 @@
-TODO: cgi-Dateien werden durch HTTP-Auth noch nicht geschützt
-
 # Munin auf einem Uberspace betreiben
 
 In dieser Anleitung gehe ich nur Munin-Server ein und nicht auf dem Node. Diese Anleitung beschreibt also, wie man andere Server und nicht den Uberspace-Host mit Munin überwacht.
@@ -77,8 +75,8 @@ Jetzt muss noch die Datei `Makefile` angepasst werden. Die Zeile 147 kann auskom
 Damit Munin die Dateien direkt an den richtigen Ort installiert, werden noch zwei Symlinks erstellt:
 
     mkdir -p ~/opt/munin/www
-    mkdir ~/html/munin/
-    ln -s ~/html/munin/ ~/opt/munin/www/docs
+    mkdir -p ~/html/munin/cgi-bin
+    ln -s ~/html/munin/cgi-bin/ ~/opt/munin/www/docs
     ln -s ~/cgi-bin/ ~/opt/munin/www/cgi
 
 Nun kann Munin kompiliert und installiert werden:
@@ -107,7 +105,7 @@ Shebang-Zeile folgendes hinzugefügt werden:
 In der Datei `~/etc/opt/munin/munin.conf` müssen die folgende Werte getroffen werden:
 
     graph_strategy cgi
-    cgiurl_graph /cgi-bin/munin-cgi-graph
+    cgiurl_graph /munin/cgi-bin/munin-cgi-graph
     html_strategy cgi
 
 Außerdem muss in dieser Datei der oder die zu überwachenden Server eingetragen werden.
@@ -125,13 +123,14 @@ Und folgendes am Ende hinzufügen:
     # HTML
     RewriteRule ^$ index.html [L]
     RewriteCond %{REQUEST_URI} !^/munin/static
+    RewriteCond %{REQUEST_URI} !^/munin/cgi-bin
     RewriteCond %{REQUEST_URI} .html$
-    RewriteRule ^(.*)          /cgi-bin/munin-cgi-html/$1 [L]
+    RewriteRule ^(.*)          /munin/cgi-bin/munin-cgi-html/$1 [L]
 
     # Images
     RewriteCond %{REQUEST_URI} !^static
     RewriteCond %{REQUEST_URI} .png$
-    RewriteRule ^/(.*)         /cgi-bin/munin-cgi-graph/$1 [L]
+    RewriteRule ^/(.*)         /munin/cgi-bin/munin-cgi-graph/$1 [L]
 
 Jetzt noch ein Benutzername/Kennwort für die HTTP-Authentifizierung von Munin bestimmt werden:
 
