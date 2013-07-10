@@ -9,20 +9,13 @@ greifen wir auf `local::lib` zurück. Wie du `local::lib` in deinem Uberspace in
 erläutert: https://uberspace.de/dokuwiki/development:perl#lokale_cpan-module
 Das Perl-Modul `RRDs.pm` benötigt "etwas" mehr Arbeit: Es benötigt rrdtool, welches widerum pango benötigt:
 
-    mkdir ~/src
-    cd ~/src/
-    wget http://ftp.acc.umu.se/pub/GNOME/sources/pango/1.28/pango-1.28.0.tar.gz
-    tar xzf pango-1.28.0.tar.gz
-    cd pango-1.28.0/
-    ./configure --prefix=/home/$USER/
-    make
-    make install
+    toast arm http://ftp.acc.umu.se/pub/GNOME/sources/pango/1.28/pango-1.28.0.tar.gz
 
     cd ~/src/
     wget http://oss.oetiker.ch/rrdtool/pub/rrdtool.tar.gz
     tar xzf rrdtool.tar.gz
     cd rrdtool-*/
-    export PKG_CONFIG_PATH=/home/$USER/lib/pkgconfig/
+    export PKG_CONFIG_PATH=/home/$USER/.toast/armed/lib/pkgconfig/
     ./configure --prefix=/home/$USER/
     make
     make install 
