@@ -11,6 +11,10 @@ Das Perl-Modul `RRDs.pm` benötigt "etwas" mehr Arbeit: Es benötigt rrdtool, we
 
     toast arm http://ftp.acc.umu.se/pub/GNOME/sources/pango/1.28/pango-1.28.0.tar.gz
 
+Wie toast funktioniert kann hier nachgelesen werden: https://wiki.uberspace.de/system:toast
+
+Und und so installert man dann rrdtool:
+
     cd ~/src/
     wget http://oss.oetiker.ch/rrdtool/pub/rrdtool.tar.gz
     tar xzf rrdtool.tar.gz
@@ -28,13 +32,24 @@ Die anderen Perl-Module können bequemer installiert werden:
     perl -MCPAN -Mlocal::lib -e 'CPAN::install(HTML::Template)'
     perl -MCPAN -Mlocal::lib -e 'CPAN::install(Text::Balanced)'
     perl -MCPAN -Mlocal::lib -e 'CPAN::install(Params::Validate)'
-    perl -MCPAN -Mlocal::lib -e 'CPAN::install(Date::Manip)'
-    perl -MCPAN -Mlocal::lib -e 'CPAN::install(Net::SSLeay)'
     perl -MCPAN -Mlocal::lib -e 'CPAN::install(Getopt::Long)'
     perl -MCPAN -Mlocal::lib -e 'CPAN::install(File::Copy::Recursive)'
-    perl -MCPAN -Mlocal::lib -e 'CPAN::install(CGI::Fast)'
     perl -MCPAN -Mlocal::lib -e 'CPAN::install(IO::Socket::INET6)'
     perl -MCPAN -Mlocal::lib -e 'CPAN::install(Log::Log4perl)'
+    perl -MCPAN -Mlocal::lib -e 'CPAN::install(Net::SSLeay)'
+    perl -MCPAN -Mlocal::lib -e 'CPAN::install(CGI::Fast)'
+
+Das Perl-Modul `Date::Manip` kann leider nicht auf diese Weise installiert werden. Die Installation wird Aufgrund von hohem Speicherverbrauch von uberspace aus, beendet.
+Als Alternative Methode habe ich vom uberspace Support folgende Methode empfohlen bekommen. Einfach mittels Perlbrew eine lokale Instanz erzeugen:
+
+    perlbrew lib create perl-5.14.2@local
+    perlbrew switch perl-5.14.2@local
+
+Und dann anschließend den normalen Befehl verwenden:
+
+    cpan Date::Manip
+
+Jetzt ist das Modul unter `/home/$USER/.perlbrew/libs/perl-5.14.2@local/lib/perl5` installiert.
 
 ## Installation
 
