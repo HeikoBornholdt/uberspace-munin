@@ -56,9 +56,9 @@ Jetzt ist das Modul unter `/home/$USER/.perlbrew/libs/perl-5.14.2@local/lib/perl
 Jetzt kann es mit Munin losgehen. Zuerst wird der Quelltext auf dem Uberspace herunterladen und anschließend entpackt:
 
     cd ~/src/
-    wget https://github.com/munin-monitoring/munin/archive/stable-2.0.zip
-    unzip stable-2.0
-    cd munin-stable-2.0/
+    wget http://downloads.munin-monitoring.org/munin/stable/2.0.25/munin-2.0.25.tar.gz
+    tar xzf munin-2.0.25.tar.gz
+    cd munin-2.0.25/
 
 Jetzt wird eine Variable definiert, welche beim Kompilieren von Munin benutzt wird und das Ziel für die Installation bestimmt.
 
