@@ -86,8 +86,8 @@ Damit Munin die Dateien direkt an den richtigen Ort installiert, werden noch zwe
 
     mkdir -p ~/opt/munin/www
     mkdir -p ~/html/munin/cgi-bin
-    ln -s ~/html/munin/cgi-bin/ ~/opt/munin/www/docs
-    ln -s ~/cgi-bin/ ~/opt/munin/www/cgi
+    ln -s ~/html/munin ~/opt/munin/www
+    ln -s ~/html/munin/cgi-bin ~/opt/munin/www/cgi
 
 Damit Munin kompliliert und installiert werden kann muss perlbrew ausgeschaltet werden:
     
@@ -109,7 +109,7 @@ gelesen werden:
 
     . ~/.bashrc
 
-In die beiden Dateien `~/cgi-bin/munin-cgi-graph` und `~/cgi-bin/munin-cgi-html` muss direkt nach der
+In die beiden Dateien `~/html/munin/cgi-bin/munin-cgi-graph` und `~/html/munin/cgi-bin/munin-cgi-html` muss direkt nach der
 Shebang-Zeile folgendes hinzugefügt werden:
 
     use lib '/home/DEIN_USERNAME/usr/local/share/perl5';
@@ -126,7 +126,7 @@ Außerdem muss in dieser Datei der oder die zu überwachenden Server eingetragen
 
 Jetzt muss die Datei `~/html/munin/.htaccess` angepasst werden.
 
-    AuthUserFile /var/www/virtual/DEIN_USERNAME/html/munin/.htpasswd
+    AuthUserFile /var/www/virtual/DEIN_USERNAME/.htuser
 
 Und folgendes am Ende hinzufügen:
 
@@ -148,7 +148,7 @@ Und folgendes am Ende hinzufügen:
 
 Jetzt noch ein Benutzername/Kennwort für die HTTP-Authentifizierung von Munin bestimmt werden:
 
-    htpasswd -m -c ~/html/munin/.htpasswd WUNSCHNAME
+    htpasswd -m -c /var/www/virtual/DEIN_USERNAME/.htuser WUNSCHNAME
 
 Nun fehlt noch ein runwhen-Job, welcher alle 5 Minuten `~/opt/munin/bin/munin-cron` aufruft
 
@@ -172,7 +172,13 @@ Und so startest du den Job:
     
     svc -u ~/service/munin-cron
     
-Mehr zum Thema `run-when` & `deamontools`findest du hier bei uberspace https://wiki.uberspace.de/system:runwhen https://wiki.uberspace.de/system:daemontools
+Mehr zum Thema `run-when` findest du hier bei uberspace https://wiki.uberspace.de/system:runwhen
+
+Auf der Seite zu den `daemontools` (https://wiki.uberspace.de/system:daemontools) gibt es noch ein nützliches `readlog`Skript. Wenn du das zur `.bashrc`hinzufügt kannst du mit 
+
+    readlog munin-cron
+    
+herausfinden ob alles sauber eingerichtet ist.
 
 Nun kann man über `http://DEIN_USERNAME.HOST.uberspace.de/munin/` Munin aufrufen. Solange Munin noch keine Daten gesammelt hat,
 wird es zu einem Fehler kommen.
