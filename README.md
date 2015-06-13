@@ -48,8 +48,10 @@ Als Alternative Methode habe ich vom uberspace Support folgende Methode empfohle
 Und dann anschließend den normalen Befehl verwenden:
 
     cpan Date::Manip
+    cpan Net::SNMP
 
 Jetzt ist das Modul unter `/home/$USER/.perlbrew/libs/perl-5.14.2@local/lib/perl5` installiert.
+Mehr Informationen zu perlbrew findest du unter: http://perlbrew.pl
 
 ## Installation
 
@@ -87,6 +89,10 @@ Damit Munin die Dateien direkt an den richtigen Ort installiert, werden noch zwe
     ln -s ~/html/munin/cgi-bin/ ~/opt/munin/www/docs
     ln -s ~/cgi-bin/ ~/opt/munin/www/cgi
 
+Damit Munin kompliliert und installiert werden kann muss perlbrew ausgeschaltet werden:
+    
+    perlbrew off
+    
 Nun kann Munin kompiliert und installiert werden:
 
     make
@@ -149,14 +155,24 @@ Nun fehlt noch ein runwhen-Job, welcher alle 5 Minuten `~/opt/munin/bin/munin-cr
     uberspace-setup-svscan
     runwhen-conf ~/etc/run-munin-cron  ~/opt/munin/bin/munin-cron
 
-In der Datei `~/etc/run-munin-cron/run` der Variable `RUNWHEN` den Wert `,M/5` geben, sowie folgendes in Zeile 29 schreiben:
+In der Datei `~/etc/run-munin-cron/run` der Variable `RUNWHEN` den Wert `,M/5` geben,
+
+    RUNWHEN=",M/5"
+
+sowie folgendes in Zeile 29 schreiben:
 
     eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)
-    export PERL5LIB=/home/$USER/usr/local/share/perl5:/home/$USER/lib/perl:$PERL5LIB
+    export PERL5LIB=/home/welmunin/.perlbrew/libs/perl-5.14.2@local/lib/perl5:/home/$USER/usr/local/share/perl5:/home/$USER/lib/perl:$PERL5LIB
 
 Jetzt noch den Symlink erstellen, damit der runwhen-Job auch gestartet wird:
 
     ln -s /home/$USER/etc/run-munin-cron ~/service/munin-cron
+
+Und so startest du den Job:
+    
+    svc -u ~/service/munin-cron
+    
+Mehr zum Thema `run-when` & `deamontools`findest du hier bei uberspace https://wiki.uberspace.de/system:runwhen https://wiki.uberspace.de/system:daemontools
 
 Nun kann man über `http://DEIN_USERNAME.HOST.uberspace.de/munin/` Munin aufrufen. Solange Munin noch keine Daten gesammelt hat,
 wird es zu einem Fehler kommen.
