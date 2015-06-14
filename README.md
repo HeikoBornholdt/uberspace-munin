@@ -10,6 +10,10 @@ erläutert: https://uberspace.de/dokuwiki/development:perl#lokale_cpan-module
 Das Perl-Modul `RRDs.pm` benötigt "etwas" mehr Arbeit: Es benötigt rrdtool, welches widerum pango benötigt:
 
     toast arm http://ftp.acc.umu.se/pub/GNOME/sources/pango/1.28/pango-1.28.0.tar.gz
+    
+Für die generierung der Grafiken per `cron`-Job brauchen wir noch folgenden Befehl:
+
+    pango-querymodules > '/home/munitest/.toast/armed/etc/pango/pango.modules'
 
 Wie toast funktioniert kann hier nachgelesen werden: https://wiki.uberspace.de/system:toast
 
@@ -53,6 +57,10 @@ Und dann anschließend den normalen Befehl verwenden:
 Jetzt ist das Modul unter `/home/$USER/.perlbrew/libs/perl-5.14.2@local/lib/perl5` installiert.
 Mehr Informationen zu perlbrew findest du unter: http://perlbrew.pl
 
+Damit Munin kompliliert und installiert werden kann, muss perlbrew ausgeschaltet werden:
+    
+    perlbrew switch-off
+
 ## Installation
 
 Jetzt kann es mit Munin losgehen. Zuerst wird der Quelltext auf dem Uberspace herunterladen und anschließend entpackt:
@@ -86,13 +94,9 @@ Damit Munin die Dateien direkt an den richtigen Ort installiert, werden noch zwe
 
     mkdir -p ~/opt/munin/www
     mkdir -p ~/html/munin/cgi-bin
-    ln -s ~/html/munin ~/opt/munin/www
+    ln -s ~/html/munin ~/opt/munin/www/docs
     ln -s ~/html/munin/cgi-bin ~/opt/munin/www/cgi
 
-Damit Munin kompliliert und installiert werden kann muss perlbrew ausgeschaltet werden:
-    
-    perlbrew off
-    
 Nun kann Munin kompiliert und installiert werden:
 
     make
@@ -109,6 +113,8 @@ gelesen werden:
 
     . ~/.bashrc
 
+## Anpassungen an der Installation
+
 In die beiden Dateien `~/html/munin/cgi-bin/munin-cgi-graph` und `~/html/munin/cgi-bin/munin-cgi-html` muss direkt nach der
 Shebang-Zeile folgendes hinzugefügt werden:
 
@@ -118,18 +124,18 @@ Shebang-Zeile folgendes hinzugefügt werden:
 
 In der Datei `~/etc/opt/munin/munin.conf` müssen die folgende Werte getroffen werden:
 
-    graph_strategy cgi
+    graph_strategy cron
     cgiurl_graph /munin/cgi-bin/munin-cgi-graph
     html_strategy cgi
 
 Außerdem muss in dieser Datei der oder die zu überwachenden Server eingetragen werden.
 
-Jetzt muss die Datei `~/html/munin/.htaccess` angepasst werden.
+## Konfiguration für die Website
+
+Jetzt muss die Datei `~/html/munin/.htaccess` erstellt werden:
 
     AuthUserFile /var/www/virtual/DEIN_USERNAME/.htuser
-
-Und folgendes am Ende hinzufügen:
-
+    
     # Rewrites
     RewriteEngine On
     RewriteBase /munin
@@ -140,15 +146,25 @@ Und folgendes am Ende hinzufügen:
     RewriteCond %{REQUEST_URI} !^/munin/cgi-bin
     RewriteCond %{REQUEST_URI} .html$
     RewriteRule ^(.*)          /munin/cgi-bin/munin-cgi-html/$1 [L]
-
+    
     # Images
     RewriteCond %{REQUEST_URI} !^static
     RewriteCond %{REQUEST_URI} .png$
     RewriteRule ^/(.*)         /munin/cgi-bin/munin-cgi-graph/$1 [L]
 
+Und eine `.htaccess` für das `cgi-bin` Verzeichnis damit die Skripte auch ausgeführt werden:
+
+    Options +ExecCGI
+    SetHandler cgi-script
+    
+    ExpiresActive On
+    ExpiresDefault M310
+
 Jetzt noch ein Benutzername/Kennwort für die HTTP-Authentifizierung von Munin bestimmt werden:
 
     htpasswd -m -c /var/www/virtual/DEIN_USERNAME/.htuser WUNSCHNAME
+
+## Konfiguration des `cron` Jobs
 
 Nun fehlt noch ein runwhen-Job, welcher alle 5 Minuten `~/opt/munin/bin/munin-cron` aufruft
 
@@ -162,7 +178,7 @@ In der Datei `~/etc/run-munin-cron/run` der Variable `RUNWHEN` den Wert `,M/5` g
 sowie folgendes in Zeile 29 schreiben:
 
     eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)
-    export PERL5LIB=/home/welmunin/.perlbrew/libs/perl-5.14.2@local/lib/perl5:/home/$USER/usr/local/share/perl5:/home/$USER/lib/perl:$PERL5LIB
+    export PERL5LIB=/home/$USER/.perlbrew/libs/perl-5.14.2@local/lib/perl5:/home/$USER/usr/local/share/perl5:/home/$USER/lib/perl:$PERL5LIB
 
 Jetzt noch den Symlink erstellen, damit der runwhen-Job auch gestartet wird:
 
@@ -174,12 +190,17 @@ Und so startest du den Job:
     
 Mehr zum Thema `run-when` findest du hier bei uberspace https://wiki.uberspace.de/system:runwhen
 
+## Analyse / Logs
+
 Auf der Seite zu den `daemontools` (https://wiki.uberspace.de/system:daemontools) gibt es noch ein nützliches `readlog`Skript. Wenn du das zur `.bashrc`hinzufügt kannst du mit 
 
     readlog munin-cron
     
 herausfinden ob alles sauber eingerichtet ist.
 
-Nun kann man über `http://DEIN_USERNAME.HOST.uberspace.de/munin/` Munin aufrufen. Solange Munin noch keine Daten gesammelt hat,
-wird es zu einem Fehler kommen.
+Wenn irgendwas nicht funktioniert, lohnt sich auch ein Blick in die munin-Logs im Verzeichnis `~/opt/munin/log/munin`. In der Datei `munin-update.log` stehen Fehlermeldung im Zusammenhang mit dem Abruf der Daten vom munin-Node.
+
+## Fertig...
+
+Nun kann man über `http://DEIN_USERNAME.HOST.uberspace.de/munin/` Munin aufrufen. Solange Munin noch keine Daten gesammelt hat, wird es zu einem Fehler kommen.
 Ebenso bricht `munin-cron` ab, wenn es keine Daten sammeln konnte.
