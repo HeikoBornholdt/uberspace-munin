@@ -206,17 +206,19 @@ Wenn du eine eigene Domain hast, kannst du diese mit diesem Befehl dem uberspace
     uberspace-add-domain -d munin.example.com -w
     
 (Nicht vergessen entsprechende Einträge mit der IP-Adresse im DNS Zone File zu machen.)
-Als nächstes lege einfach den Ordner `munin.example.com`im Ordner `/var/www/virtual/DEIN_USERNAME/` an. Kopiere einfach den `static`-Ordner und die `.htaccess` in diesen Ordner. In der `.htaccess` müssen die Zeilen 9 und 10 so angepasst werden:
+Als nächstes lege einfach den Ordner `munin.example.com`im Ordner `/var/www/virtual/DEIN_USERNAME/` an. Kopiere einfach die oben erstellte `.htaccess` in diesen Ordner. In der `.htaccess` müssen die Zeilen 9 und 10 so angepasst werden:
 
     RewriteCond %{REQUEST_URI} !^/static
     RewriteCond %{REQUEST_URI} !^/cgi-bin
+
+(Der Ordner `static` wird automatisch angelegt.)
 
 Zu guter letzt muss noch der Softlink für die Grafiken geändert werden:
 
     rm ~/opt/munin/www/docs
     ln -s /var/www/virtual/DEIN_USERNAME/munin.example.com ~/opt/munin/www/docs
 
-Jetzt sollte die munin Installation unter `http://munin.example.com` erreichbar sein.
+Jetzt sollte die munin Installation unter `http://munin.example.com` erreichbar sein. (Es dauert höchsten 5 Minuten bis die Bilder angezeigt werden und eventuell zwei Aufrufe bis die Seite komplett aussieht.)
 
 ## Bonus II: Daten umziehen
 
