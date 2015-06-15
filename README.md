@@ -217,3 +217,32 @@ Zu guter letzt muss noch der Softlink für die Grafiken geändert werden:
     ln -s /var/www/virtual/DEIN_USERNAME/munin.example.com ~/opt/munin/www/docs
 
 Jetzt sollte die munin Installation unter `http://munin.example.com` erreichbar sein.
+
+## Bonus II: Daten umziehen
+
+Angenommen du willst deine munin Installation auf einen anderen uberspace-Account umziehen. Dazu empfehle ich diese Anleitung für den Ziel-uberspace-Account zuerst durchzuführen. Wenn die Daten im neuen Account korrekt ermittelt und angezeigt werden können die Daten folgendermaßen vom alten auf den neuen uberspace-Account kopiert werden.
+
+Hinweis: Für lückenlose Daten muss das packen, kopieren und entpacken zwischen zwei `cron`-Jobs ausgeführt werden.
+
+Hinweis 2: Die Beschreibung gilt nur für umzüge, **nicht** für das Zusammenführen von zwei Datenbeständen!
+
+1. Backup auf dem **neuen** uberspace erstellen:
+
+        [NEW_USERNAME@HOST2 ~]$ cd ~/var/opt/
+        [NEW_USERNAME@HOST2 opt]$ tar -czf munin_backup.tar.gz 
+
+2. Datenpaket auf dem **alten** uberspace erstellen:
+
+        [OLD_USERNAME@HOST1 ~]$ cd ~/var/opt/
+        [OLD_USERNAME@HOST1 opt]$ tar -czf munin_now.tar.gz munin
+
+3. Datenpaket auf dem **neuen** uberspace holen und entpacken:
+
+        [NEW_USERNAME@HOST2 opt]$ scp matzoman@octans.uberspace.de:~/var/opt/munin_20150615_1422.tar.gz . 
+        [NEW_USERNAME@HOST2 opt]$ tar xvfz munin_now.tar.gz 
+    
+4. Auf dem **neuen** uberspace die per `cron`-Job erstellten png-Dateien löschen (werden mit dem nächsten Job wieder neu erstellt.)
+
+        [NEW_USERNAME@HOST2 opt]$ rm -rf ~/opt/munin/www/docs/DEINE_DOMAIN/*
+    
+Nach spätestens 5 Minuten sollten dann auf dem neuen uberspace die Daten vom alten uberspace angezeigt werden.
