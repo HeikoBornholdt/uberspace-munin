@@ -231,7 +231,7 @@ Hinweis 2: Die Beschreibung gilt nur für umzüge, **nicht** für das Zusammenf�
 1. Backup auf dem **neuen** uberspace erstellen:
 
         [NEW_USERNAME@HOST2 ~]$ cd ~/var/opt/
-        [NEW_USERNAME@HOST2 opt]$ tar -czf munin_backup.tar.gz 
+        [NEW_USERNAME@HOST2 opt]$ tar -czf munin_backup.tar.gz munin
 
 2. Datenpaket auf dem **alten** uberspace erstellen:
 
