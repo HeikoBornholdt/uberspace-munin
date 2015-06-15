@@ -90,12 +90,14 @@ Jetzt muss noch die Datei `Makefile` angepasst werden. Die Zeile 147 kann auskom
 
     $(CHOWN) root:root $(PLUGSTATE)
 
+Bitte prüfe kurz ob die Softlinks `~/html` und `~/cgi-bin` korrekt in deinem uberspace auf `/var/www/virtual/DEIN_USERNAME/html` bzw.  `/var/www/virtual/DEIN_USERNAME/cgi-bin` eingerichtet sind. 
+
 Damit Munin die Dateien direkt an den richtigen Ort installiert, werden noch zwei Symlinks erstellt:
 
     mkdir -p ~/opt/munin/www
-    mkdir -p ~/html/munin/cgi-bin
+    mkdir -p ~/html/munin
     ln -s ~/html/munin ~/opt/munin/www/docs
-    ln -s ~/html/munin/cgi-bin ~/opt/munin/www/cgi
+    ln -s ~/cgi-bin ~/opt/munin/www/cgi
 
 Nun kann Munin kompiliert und installiert werden:
 
@@ -145,20 +147,12 @@ Jetzt muss die Datei `~/html/munin/.htaccess` erstellt werden:
     RewriteCond %{REQUEST_URI} !^/munin/static
     RewriteCond %{REQUEST_URI} !^/munin/cgi-bin
     RewriteCond %{REQUEST_URI} .html$
-    RewriteRule ^(.*)          /munin/cgi-bin/munin-cgi-html/$1 [L]
+    RewriteRule ^(.*)          /cgi-bin/munin-cgi-html/$1 [L]
     
     # Images
     RewriteCond %{REQUEST_URI} !^static
     RewriteCond %{REQUEST_URI} .png$
-    RewriteRule ^/(.*)         /munin/cgi-bin/munin-cgi-graph/$1 [L]
-
-Und eine `.htaccess` für das `cgi-bin` Verzeichnis damit die Skripte auch ausgeführt werden:
-
-    Options +ExecCGI
-    SetHandler cgi-script
-    
-    ExpiresActive On
-    ExpiresDefault M310
+    RewriteRule ^/(.*)         /cgi-bin/munin-cgi-graph/$1 [L]
 
 Jetzt noch ein Benutzername/Kennwort für die HTTP-Authentifizierung von Munin bestimmt werden:
 
