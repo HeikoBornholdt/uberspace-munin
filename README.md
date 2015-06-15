@@ -198,3 +198,22 @@ Wenn irgendwas nicht funktioniert, lohnt sich auch ein Blick in die munin-Logs i
 
 Nun kann man über `http://DEIN_USERNAME.HOST.uberspace.de/munin/` Munin aufrufen. Solange Munin noch keine Daten gesammelt hat, wird es zu einem Fehler kommen.
 Ebenso bricht `munin-cron` ab, wenn es keine Daten sammeln konnte.
+
+## Bonus: eigene Domain
+
+Wenn du eine eigene Domain hast, kannst du diese mit diesem Befehl dem uberspace hinzufügen:
+
+    uberspace-add-domain -d munin.example.com -w
+    
+(Nicht vergessen entsprechende Einträge mit der IP-Adresse im DNS Zone File zu machen.)
+Als nächstes lege einfach den Ordner `munin.example.com`im Ordner `/var/www/virtual/DEIN_USERNAME/` an. Kopiere einfach den `static`-Ordner und die `.htaccess` in diesen Ordner. In der `.htaccess` müssen die Zeilen 9 und 10 so angepasst werden:
+
+    RewriteCond %{REQUEST_URI} !^/static
+    RewriteCond %{REQUEST_URI} !^/cgi-bin
+
+Zu guter letzt muss noch der Softlink für die Grafiken geändert werden:
+
+    rm ~/opt/munin/www/docs
+    ln -s /var/www/virtual/DEIN_USERNAME/munin.example.com ~/opt/munin/www/docs
+
+Jetzt sollte die munin Installation unter `http://munin.example.com` erreichbar sein.
