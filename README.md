@@ -13,7 +13,7 @@ Das Perl-Modul `RRDs.pm` benötigt "etwas" mehr Arbeit: Es benötigt rrdtool, we
     
 Für die generierung der Grafiken per `cron`-Job brauchen wir noch folgenden Befehl:
 
-    pango-querymodules > '/home/munitest/.toast/armed/etc/pango/pango.modules'
+    pango-querymodules > '/home/DEIN_USERNAME/.toast/armed/etc/pango/pango.modules'
 
 Wie toast funktioniert kann hier nachgelesen werden: https://wiki.uberspace.de/system:toast
 
@@ -240,7 +240,7 @@ Hinweis 2: Die Beschreibung gilt nur für umzüge, **nicht** für das Zusammenf�
 
 3. Datenpaket auf dem **neuen** uberspace holen und entpacken:
 
-        [NEW_USERNAME@HOST2 opt]$ scp matzoman@octans.uberspace.de:~/var/opt/munin_20150615_1422.tar.gz . 
+        [NEW_USERNAME@HOST2 opt]$ scp OLD_USERNAME@HOST1.uberspace.de:~/var/opt/munin_now.tar.gz . 
         [NEW_USERNAME@HOST2 opt]$ tar xvfz munin_now.tar.gz 
     
 4. Auf dem **neuen** uberspace die per `cron`-Job erstellten png-Dateien löschen (werden mit dem nächsten Job wieder neu erstellt.)
