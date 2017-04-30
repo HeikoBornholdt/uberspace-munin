@@ -43,6 +43,11 @@ Die anderen Perl-Module können bequemer installiert werden:
     perl -MCPAN -Mlocal::lib -e 'CPAN::install(Net::SSLeay)'
     perl -MCPAN -Mlocal::lib -e 'CPAN::install(CGI::Fast)'
 
+Die Installation der weiteren Perl-Module kann funktionieren oder auch abbrechen. Nur bei Problemen ist eine alternative Installation über `perlbrew` notwendig.
+
+    perl -MCPAN -Mlocal::lib -e 'CPAN::install(Date::Manip)'
+    perl -MCPAN -Mlocal::lib -e 'CPAN::install(Net::SNMP)'
+
 Das Perl-Modul `Date::Manip` kann leider nicht auf diese Weise installiert werden. Die Installation wird Aufgrund von hohem Speicherverbrauch von uberspace aus, beendet.
 Als Alternative Methode habe ich vom uberspace Support folgende Methode empfohlen bekommen. Einfach mittels Perlbrew eine lokale Instanz erzeugen:
 
@@ -66,9 +71,9 @@ Damit Munin kompliliert und installiert werden kann, muss perlbrew ausgeschaltet
 Jetzt kann es mit Munin losgehen. Zuerst wird der Quelltext auf dem Uberspace herunterladen und anschließend entpackt:
 
     cd ~/src/
-    wget http://downloads.munin-monitoring.org/munin/stable/2.0.25/munin-2.0.25.tar.gz
-    tar xzf munin-2.0.25.tar.gz
-    cd munin-2.0.25/
+    wget http://downloads.munin-monitoring.org/munin/stable/2.0.33/munin-2.0.33.tar.gz
+    tar xzf munin-2.0.33.tar.gz
+    cd munin-2.0.33/
 
 Jetzt wird eine Variable definiert, welche beim Kompilieren von Munin benutzt wird und das Ziel für die Installation bestimmt.
 
@@ -117,7 +122,7 @@ gelesen werden:
 
 ## Anpassungen an der Installation
 
-In die beiden Dateien `~/html/munin/cgi-bin/munin-cgi-graph` und `~/html/munin/cgi-bin/munin-cgi-html` muss direkt nach der
+In die beiden Dateien `~/cgi-bin/munin-cgi-graph` und `~/cgi-bin/munin-cgi-html` muss direkt nach der
 Shebang-Zeile folgendes hinzugefügt werden:
 
     use lib '/home/DEIN_USERNAME/usr/local/share/perl5';
@@ -127,7 +132,7 @@ Shebang-Zeile folgendes hinzugefügt werden:
 In der Datei `~/etc/opt/munin/munin.conf` müssen die folgende Werte getroffen werden:
 
     graph_strategy cron
-    cgiurl_graph /munin/cgi-bin/munin-cgi-graph
+    cgiurl_graph /cgi-bin/munin-cgi-graph
     html_strategy cgi
 
 Außerdem muss in dieser Datei der oder die zu überwachenden Server eingetragen werden.
@@ -137,6 +142,9 @@ Außerdem muss in dieser Datei der oder die zu überwachenden Server eingetragen
 Jetzt muss die Datei `~/html/munin/.htaccess` erstellt werden:
 
     AuthUserFile /var/www/virtual/DEIN_USERNAME/.htuser
+    AuthName "Munin"
+    AuthType Basic
+    require valid-user
     
     # Rewrites
     RewriteEngine On
@@ -174,6 +182,8 @@ sowie folgendes in Zeile 29 schreiben:
     eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)
     export PERL5LIB=/home/$USER/.perlbrew/libs/perl-5.14.2@local/lib/perl5:/home/$USER/usr/local/share/perl5:/home/$USER/lib/perl:$PERL5LIB
 
+Wenn alle Perl-Module ohne `perlbrew` installiert wurden, muss der erste Pfad in `PERL5LIB` entsprechend herausgenommen werden.
+
 Jetzt noch den Symlink erstellen, damit der runwhen-Job auch gestartet wird:
 
     ln -s /home/$USER/etc/run-munin-cron ~/service/munin-cron
@@ -193,6 +203,12 @@ Auf der Seite zu den `daemontools` (https://wiki.uberspace.de/system:daemontools
 herausfinden ob alles sauber eingerichtet ist.
 
 Wenn irgendwas nicht funktioniert, lohnt sich auch ein Blick in die munin-Logs im Verzeichnis `~/opt/munin/log/munin`. In der Datei `munin-update.log` stehen Fehlermeldung im Zusammenhang mit dem Abruf der Daten vom munin-Node.
+
+Wenn im Apache eine Fehlermeldung wie "internal server error" steht, dann fehlen vermutlich noch die vom cron Job erzeugten Daten. Für eine genaue Fehleranalyse hilft es die Ausgabe `error_log` zu aktivieren. Dies ist bei uberspace beschrieben https://wiki.uberspace.de/webserver:logs
+
+Die Fehlermeldungen von Apache können dann aktiv verfolgt werden:
+
+    tail -f ~/logs/error_log
 
 ## Fertig...
 
