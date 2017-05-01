@@ -43,6 +43,7 @@ Die anderen Perl-Module können bequemer installiert werden:
     perl -MCPAN -Mlocal::lib -e 'CPAN::install(Net::SSLeay)'
     perl -MCPAN -Mlocal::lib -e 'CPAN::install(CGI::Fast)'
 
+Im Verlauf der Installation fragt CPAN, ob weitere Abhängigkeiten installiert werden sollen. Dies kann immer bejaht werden, außer bei dem bereits Global installierten `Carp`, denn dies würde später zu einem Versionskonflikt mit `Carp::Heavy` führen.
 Die Installation der weiteren Perl-Module kann funktionieren oder auch abbrechen. Nur bei Problemen ist eine alternative Installation über `perlbrew` notwendig.
 
     perl -MCPAN -Mlocal::lib -e 'CPAN::install(Date::Manip)'
